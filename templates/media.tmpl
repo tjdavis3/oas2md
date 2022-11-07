@@ -1,0 +1,28 @@
+{{ define "media" }}
+{{ .Schema.Schema.Description }}
+
+**Required:**
+{{ range $required := .Schema.Schema.Required }}
+- {{ $required }}
+{{ end }}
+
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+{{- range $prop, $def := .Schema.Schema.Properties }}
+<tr><td>{{- $prop }}</td><td>{{ $def.Schema.Type }}</td><td>{{ $def.Schema.Description }}</td></tr>
+{{- end }}
+</table>
+
+
+##### Example 
+<details>
+<summary>
+application/json
+</summary>
+
+```json
+{{ renderExample .Schema.Schema }}
+```
+
+</details>
+{{ end }}

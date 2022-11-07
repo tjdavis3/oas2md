@@ -1,0 +1,59 @@
+{{ define "hugoresource" }}
+---
+title: {{ .Name }}
+description: {{ .Resource.Summary }}
+weight: {{ .Weight }}
+---
+
+{{ template "resourcedetails" . }}
+{{ end }}
+
+{{ define "resource" }}
+# {{ .Name }}
+{{ .Resource.Summary }}
+
+{{ template "resourcedetails" . }}
+{{ end }}
+
+{{ define "resourcedetails" }}
+
+{{ $path := .Name }}
+{{ .Resource.Description }}
+
+
+{{ if .Resource.Parameters }}
+## Parameters
+
+| Parameter | In   | Required? | Description                  |
+|----------------|--------|-----------|------------------------------|
+{{- range $param := .Resource.Parameters }}
+| {{ $param.Name }} | {{ $param.In }} | {{ $param.Required }} | {{ $param.Description }} |
+{{ end }}
+{{ end }}
+
+## Actions
+
+| Method | Endpoint name                            | Description             |
+|--------|------------------------------------------|-------------------------|
+{{- range $verb, $op := .Resource.GetOperations }}
+| {{ upper $verb }} | {{ $op.Summary }} | {{ $op.Description }} |
+{{- end }}
+
+{{- range $verb, $op := .Resource.GetOperations }}
+<details>
+<summary>
+{{ upper $verb }}
+</summary>
+
+### {{ upper $verb }}: {{ $op.Summary }}
+
+```
+{{ upper $verb }} {{ $path }}
+```
+
+{{ template "endpoint" $op }}
+</details>
+{{- end }}
+
+
+{{ end }}

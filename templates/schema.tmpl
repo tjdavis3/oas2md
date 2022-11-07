@@ -1,0 +1,33 @@
+{{ define "hugoschema" }}
+---
+title: {{ .Name }}
+---
+
+{{ template "schemadetail" . }}
+
+{{ end }} {{/* hugoschema */}}
+
+{{ define "schema" }}
+
+# {{ .Name }}
+
+{{ end }} {{/* schema */}}
+
+{{ define "schemadetail" }}
+{{ .Schema.Description }}
+
+**Properties**
+
+| Name | Type | Required | Description |
+| ---- | ---- | -------- | ----------- |
+{{- range $name, $prop := .Schema.Properties }}
+| {{ $name }} | {{ $prop.Schema.Type }} | {{ $prop.Schema.Required }} | {{ $prop.Schema.Description }} |
+{{- end }} {{/* range Properties */}}
+
+**Example**
+
+```json
+{{ renderExample .Schema }}
+```
+
+{{ end }} {{/* schemadetail */}}

@@ -1,0 +1,94 @@
+{{ define "endpoint" }}
+
+#### Description
+
+{{ .Description }}
+
+{{ if .Security }}
+#### Authorization
+
+{{ range $security := .Security }}
+{{ range $reqname, $reqs := $security.Requirements }}
+- {{ $reqname }}
+{{ range $req := $reqs }}
+  + {{ $req }}
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+#### Request 
+
+{{ if .Parameters }}
+##### Parameters
+
+| Path parameter | Location | Type   | Required? | Description                  |
+|----------------|--- | --------|-----------|------------------------------|
+{{- range $param := .Parameters }}
+| {{ $param.Name }} | {{ $param.In }} | {{ $param.Schema.Schema.Type }}| {{ $param.Required }} | {{ $param.Description }} |
+{{- end }}
+
+{{ end }}
+
+{{ if .RequestBody }}
+##### Request body
+
+{{ .RequestBody.Description }}
+
+{{ if .RequestBody.Required }}**Required**{{ end }}
+
+{{ range $type, $content := .RequestBody.Content }}
+{{ if eq $type "application/json" }}
+
+{{ template "media" $content }}
+
+{{ end }}{{/* end if eq $type */}}
+{{ end }}{{/* end range */}}
+{{ end }}{{/* end if .RequestBody */}}
+
+{{ if .Responses }}
+### Responses
+
+| Status code                          | Description          | 
+|------------------------|----------------------|
+{{- range $code, $response := .Responses.Codes }}
+| `{{ $code }}`       |    {{ $response.Description }} |
+{{- end }}
+
+
+{{- range $code, $response := .Responses.Codes }}
+<details>
+<summary>
+{{ $code }}
+</summary>
+
+#### {{ $code }}
+{{ $response.Description }}
+{{- range $cType, $body := $response.Content }}
+{{ if hasSuffix "json" $cType }}
+
+{{ template "schemadetail" $body.Schema }}
+
+{{/* remove example since it's in schemadetail */}}
+<!--
+##### Example
+<details>
+<summary>
+{{ $cType }}
+</summary>
+
+```json
+{{ renderExample $body }}
+```
+
+</details>
+-->
+{{ end }}
+{{ end }}
+</details>
+{{ end }}
+
+{{ end }}
+---
+{{ end }}
+

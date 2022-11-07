@@ -1,0 +1,64 @@
+{{ define "hugoindex" }}
+---
+title: {{ .Info.Title }}
+description: {{ .Info.Summary }}
+---
+
+{{ template "overview" . }}
+{{ end }}
+
+<!--  Singlepage -->
+{{ define "singlepage" }}
+
+{{ template "index" . }}
+
+{{ if .Paths }}
+{{ range $pathName, $path := .Paths.PathItems }}
+## {{ $pathName }} - {{ $path.Summary }}
+{{ template "resource" $path }}
+---
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ define "index" }}
+# {{ .Info.Title }}
+
+{{ .Info.Summary }}
+
+## Overview
+{{ template "overview" . }}
+
+{{ end }}
+
+{{ define "overview" }}
+
+{{ .Info.Description }}
+
+### Version
+
+{{ .Info.Version }}
+
+### Base URL
+
+{{ range $server := .Servers }}
+{{ $server.URL }}
+: {{ $server.Description }}
+
+{{ end }}
+
+{{ if .Security }}
+### Authorization
+
+{{ range $security := .Security }}
+{{ range $reqname, $reqs := $security.Requirements }}
+- {{ $reqname }}
+{{ range $req := $reqs }}
+  + {{ $req }}
+{{ end }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ end }}
+
